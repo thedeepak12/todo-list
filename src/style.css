@@ -4,17 +4,81 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Roboto';
 }
 
 header {
     position: static;
-    height: 75px;
+    height: 12vh;
     background-color: white;
-    color: black;
+    color: #e44332;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2rem;
-    font-family: 'Roboto';
     font-weight: bolder;
+    border-bottom: 1px solid #ddd;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 250px;
+    height: 88vh;
+    background-color: #fcfaf8;
+    border-right: 1px solid #ddd;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.tile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.tile:hover {
+    background-color: #ffefe5;
+}
+
+.tile.selected {
+    background-color: #ffefe5;
+    font-weight: bold;
+}
+
+.tile img {
+    width: 24px;
+    height: 24px;
+    filter: invert(50%) 
+}
+
+.project-section {
+    margin-top: 2rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+}
+
+.project-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #555555;
+    font-size: 0.9rem;
+}
+
+.project-item {
+    padding: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.project-item:hover {
+    color: tomato;
 }
