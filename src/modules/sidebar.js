@@ -2,10 +2,27 @@ import inboxIcon from "../assets/images/inbox.svg";
 import todayIcon from '../assets/images/today.svg';
 import upcomingIcon from '../assets/images/upcoming.svg';
 import tagIcon from '../assets/images/tag.svg';
+import addIcon from '../assets/images/add.svg';
 
 export default function buildSidebar() {
     const sidebar = document.createElement("div");
     sidebar.classList.add("sidebar");
+
+    const addTaskBtn = document.createElement("div");
+    addTaskBtn.classList.add("add-task");
+
+    const addImg = document.createElement("img");
+    addImg.src = addIcon;
+    addImg.alt = "Add task";
+
+    const addText = document.createElement("div");
+    addText.textContent = "Add task";
+
+    addTaskBtn.appendChild(addImg);
+    addTaskBtn.appendChild(addText);
+
+    sidebar.appendChild(addTaskBtn);
+
 
     const views = [
         { id: 'inbox', label: 'Inbox', icon: inboxIcon },
