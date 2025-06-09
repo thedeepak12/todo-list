@@ -1,6 +1,9 @@
 import './style.css';
 import buildSidebar from './modules/sidebar';
 import createTaskForm from './modules/task';
+import { loadTasks, saveTasks } from './modules/storage.js';
+
+let tasks = loadTasks();
 
 const app = document.getElementById('app');
 
@@ -24,10 +27,47 @@ app.appendChild(container);
 const addTaskBtn = sidebar.querySelector(".add-task");
 
 addTaskBtn.addEventListener("click", () => {
-    main.innerHTML = "";
     const form = createTaskForm((taskData) => {
-        console.log("Task submitted", taskData);
-        main.innerHTML = "";
+        tasks.push({
+        ...taskData,
+        completed: false,
+        createdAt: new Date().toISOString(),
+    });
+        saveTasks(tasks);
+        renderTaskList();
     });
     main.appendChild(form);
-})
+});
+
+function renderTaskList() {
+    main.innerHTML = '';
+
+    if (tasks.length === 0) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No tasks yet.';
+        main.appendChild(empty);
+        return;
+    }
+
+    tasks.forEach(task => {
+        const taskDiv = document.createElement('div');
+        taskDiv.classList.add('task-item');
+
+        const title = document.createElement('h3');
+        title.textContent = task.title;
+
+        const description = document.createElement("p");
+        description.textContent = task.description;
+
+        const due = document.createElement('p');
+        due.textContent = `Due: ${task.dueDate || 'No date'}`;
+
+        taskDiv.appendChild(title);
+        taskDiv.appendChild(description);
+        taskDiv.appendChild(due);
+
+        main.appendChild(taskDiv);
+    });
+}
+
+renderTaskList();
