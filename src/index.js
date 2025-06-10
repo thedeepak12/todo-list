@@ -4,6 +4,7 @@ import createTaskForm from './modules/task';
 import { loadTasks, saveTasks } from './modules/storage.js';
 
 let tasks = loadTasks();
+let currentView = 'inbox';
 
 const app = document.getElementById('app');
 
@@ -38,6 +39,17 @@ addTaskBtn.addEventListener("click", () => {
     });
     main.appendChild(form);
 });
+
+const viewTiles = document.querySelectorAll('.tile');
+viewTiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+        currentView = tile.id;
+        viewTiles.forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+        renderTaskList();
+    })
+})
+sidebar.querySelector('#inbox').classList.add('selected');
 
 function renderTaskList() {
     main.innerHTML = '';
