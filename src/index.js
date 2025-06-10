@@ -2,6 +2,7 @@ import './style.css';
 import buildSidebar from './modules/sidebar';
 import createTaskForm from './modules/task';
 import { loadTasks, saveTasks } from './modules/storage.js';
+import { format, isToday, isWithinInterval, addDays } from 'date-fns';
 
 let tasks = loadTasks();
 let currentView = 'inbox';
@@ -54,14 +55,24 @@ sidebar.querySelector('#inbox').classList.add('selected');
 function renderTaskList() {
     main.innerHTML = '';
 
-    if (tasks.length === 0) {
+    let filterTasks = tasks;
+    if (currentView === 'today') {
+        filterTasks = tasks.filter(task => task.dueDate && isToday(new Date(task.dueDate)));
+    }
+    else if (currentView === 'upcoming') {
+        const today = new Date();
+        const nextWeek = addDays(today, 7);
+        filterTasks = tasks.filter(task => task.dueDate && isWithinInterval(new Date(task.dueDate), { start: today, end: nextWeek }));
+    }
+
+    if (filterTasks.length === 0) {
         const empty = document.createElement('p');
         empty.textContent = 'No tasks yet.';
         main.appendChild(empty);
         return;
     }
 
-    tasks.forEach(task => {
+    filterTasks.forEach(task => {
         const taskDiv = document.createElement('div');
         taskDiv.classList.add('task-item');
 
@@ -72,7 +83,7 @@ function renderTaskList() {
         description.textContent = task.description;
 
         const due = document.createElement('p');
-        due.textContent = `Due: ${task.dueDate || 'No date'}`;
+        due.textContent = task.dueDate ? `Due: ${format(new Date(task.dueDate), 'dd MMM')}` : ' ';
 
         taskDiv.appendChild(title);
         taskDiv.appendChild(description);
