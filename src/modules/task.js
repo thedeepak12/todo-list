@@ -1,4 +1,4 @@
-export default function createTaskForm(onSubmit) {
+export default function createTaskForm(onSubmit, task = {}, index) {
     const overlay = document.createElement("div");
     overlay.classList.add("form-overlay");
 
@@ -12,6 +12,7 @@ export default function createTaskForm(onSubmit) {
     const title = document.createElement("input");
     title.type = "text";
     title.id = "task-title";
+    title.value = task.title || '';
     title.required = true;
 
     const descLabel = document.createElement("label");
@@ -21,6 +22,7 @@ export default function createTaskForm(onSubmit) {
     const description = document.createElement("textarea");
     description.id = "task-desc";
     description.rows = 4;
+    description.value = task.description || '';
 
     const dateLabel = document.createElement("label");
     dateLabel.textContent = "Due Date:";
@@ -29,6 +31,7 @@ export default function createTaskForm(onSubmit) {
     const dueDate = document.createElement("input");
     dueDate.type = "date";
     dueDate.id = "task-date";
+    dueDate.value = task.dueDate || '';
 
     const priorityLabel = document.createElement("label");
     priorityLabel.textContent = "Priority:";
@@ -45,7 +48,7 @@ export default function createTaskForm(onSubmit) {
 
     const submit = document.createElement("button");
     submit.type = "submit";
-    submit.textContent = "Add task";
+    submit.textContent = task.title ? "Save" : "Add Task";
     submit.classList.add("add-task-btn");
 
     const cancel = document.createElement("button");
@@ -64,23 +67,20 @@ export default function createTaskForm(onSubmit) {
     form.appendChild(submit);
     form.appendChild(cancel);
 
-
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-
         const taskData = {
             title: title.value.trim(),
             description: description.value.trim(),
             dueDate: dueDate.value,
-            priority: priority.value
+            priority: priority.value,
         };
-
         if (taskData.title) {
-            onSubmit(taskData);
+            onSubmit(taskData, index);
             overlay.remove();
         }
     });
-
+    
     cancel.addEventListener("click", () => {
         overlay.remove();
     });

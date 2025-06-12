@@ -3,6 +3,9 @@ import buildSidebar from './modules/sidebar';
 import createTaskForm from './modules/task';
 import { loadTasks, saveTasks } from './modules/storage.js';
 import { format, isToday, isWithinInterval, addDays } from 'date-fns';
+import editIcon from './assets/images/edit.svg';
+import deleteIcon from './assets/images/delete.svg';
+import { updateTask, deleteTask } from './todoLogic.js';
 
 let tasks = loadTasks();
 let currentView = 'inbox';
@@ -31,61 +34,100 @@ const addTaskBtn = sidebar.querySelector(".add-task");
 addTaskBtn.addEventListener("click", () => {
     const form = createTaskForm((taskData) => {
         tasks.push({
-        ...taskData,
-        completed: false,
-        createdAt: new Date().toISOString(),
-    });
+            ...taskData,
+            completed: false,
+            createdAt: new Date().toISOString(),
+        });
         saveTasks(tasks);
         renderTaskList();
     });
     main.appendChild(form);
 });
 
-const viewTiles = document.querySelectorAll('.tile');
+const viewTiles = sidebar.querySelectorAll('.tile:not(.project-section .tile)');
 viewTiles.forEach(tile => {
     tile.addEventListener('click', () => {
         currentView = tile.id;
         viewTiles.forEach(t => t.classList.remove('selected'));
         tile.classList.add('selected');
         renderTaskList();
-    })
-})
+    });
+});
 sidebar.querySelector('#inbox').classList.add('selected');
 
 function renderTaskList() {
     main.innerHTML = '';
 
-    let filterTasks = tasks;
+    let filteredTasks = tasks;
     if (currentView === 'today') {
-        filterTasks = tasks.filter(task => task.dueDate && isToday(new Date(task.dueDate)));
-    }
-    else if (currentView === 'upcoming') {
+        filteredTasks = tasks.filter(task => task.dueDate && isToday(new Date(task.dueDate)));
+    } else if (currentView === 'upcoming') {
         const today = new Date();
         const nextWeek = addDays(today, 7);
-        filterTasks = tasks.filter(task => task.dueDate && isWithinInterval(new Date(task.dueDate), { start: today, end: nextWeek }));
+        filteredTasks = tasks.filter(task => 
+            task.dueDate && 
+            isWithinInterval(new Date(task.dueDate), { start: today, end: nextWeek })
+        );
     }
 
-    if (filterTasks.length === 0) {
+    if (filteredTasks.length === 0) {
         const empty = document.createElement('p');
         empty.textContent = 'No tasks yet.';
         main.appendChild(empty);
         return;
     }
 
-    filterTasks.forEach(task => {
+    filteredTasks.forEach((task, index) => {
         const taskDiv = document.createElement('div');
         taskDiv.classList.add('task-item');
+
+        const taskHeader = document.createElement('div');
+        taskHeader.classList.add('task-header');
 
         const title = document.createElement('h3');
         title.textContent = task.title;
 
-        const description = document.createElement("p");
+        const actions = document.createElement('div');
+        actions.classList.add('task-actions');
+
+        const editBtn = document.createElement('button');
+        editBtn.classList.add('edit-btn');
+        const editImg = document.createElement('img');
+        editImg.src = editIcon;
+        editImg.alt = 'Edit task';
+        editBtn.appendChild(editImg);
+        editBtn.addEventListener('click', () => {
+            const form = createTaskForm((taskData) => {
+                updateTask(index, taskData, tasks);
+                renderTaskList();
+            }, task, index);
+            main.appendChild(form);
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-btn');
+        const deleteImg = document.createElement('img');
+        deleteImg.src = deleteIcon;
+        deleteImg.alt = 'Delete task';
+        deleteBtn.appendChild(deleteImg);
+        deleteBtn.addEventListener('click', () => {
+            deleteTask(index, tasks);
+            renderTaskList();
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        taskHeader.appendChild(title);
+        taskHeader.appendChild(actions);
+
+        const description = document.createElement('p');
         description.textContent = task.description;
 
         const due = document.createElement('p');
-        due.textContent = task.dueDate ? `Due: ${format(new Date(task.dueDate), 'dd MMM')}` : ' ';
+        due.classList.add('due-date');
+        due.textContent = task.dueDate ? `Due: ${format(new Date(task.dueDate), 'dd MMM')}` : '';
 
-        taskDiv.appendChild(title);
+        taskDiv.appendChild(taskHeader);
         taskDiv.appendChild(description);
         taskDiv.appendChild(due);
 
