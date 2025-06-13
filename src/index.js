@@ -84,8 +84,32 @@ function renderTaskList() {
         const taskHeader = document.createElement('div');
         taskHeader.classList.add('task-header');
 
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('task-checkbox');
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                deleteTask(index, tasks);
+                renderTaskList();
+            }
+        });
+        
+        const taskDetails = document.createElement('div');
+        taskDetails.classList.add('task-details');
+
         const title = document.createElement('h3');
         title.textContent = task.title;
+
+        const description = document.createElement('p');
+        description.textContent = task.description;
+
+        const due = document.createElement('p');
+        due.classList.add('due-date');
+        due.textContent = task.dueDate ? `Due: ${format(new Date(task.dueDate), 'dd MMM')}` : '';
+
+        taskDetails.appendChild(title);
+        taskDetails.appendChild(description);
+        taskDetails.appendChild(due);
 
         const actions = document.createElement('div');
         actions.classList.add('task-actions');
@@ -117,20 +141,12 @@ function renderTaskList() {
 
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
-        taskHeader.appendChild(title);
+
+        taskHeader.appendChild(checkbox);
+        taskHeader.appendChild(taskDetails);
         taskHeader.appendChild(actions);
 
-        const description = document.createElement('p');
-        description.textContent = task.description;
-
-        const due = document.createElement('p');
-        due.classList.add('due-date');
-        due.textContent = task.dueDate ? `Due: ${format(new Date(task.dueDate), 'dd MMM')}` : '';
-
         taskDiv.appendChild(taskHeader);
-        taskDiv.appendChild(description);
-        taskDiv.appendChild(due);
-
         main.appendChild(taskDiv);
     });
 }
