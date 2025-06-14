@@ -1,4 +1,4 @@
-import { saveTasks } from './modules/storage.js';
+import { saveTasks } from './storage';
 
 export function updateTask(index, taskData, tasks) {
     tasks[index] = {

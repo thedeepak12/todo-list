@@ -1,11 +1,11 @@
 import './style.css';
 import buildSidebar from './modules/sidebar';
 import createTaskForm from './modules/task';
-import { loadTasks, saveTasks } from './modules/storage.js';
+import { loadTasks, saveTasks } from './modules/storage';
 import { format, isToday, isWithinInterval, addDays } from 'date-fns';
 import editIcon from './assets/images/edit.svg';
 import deleteIcon from './assets/images/delete.svg';
-import { updateTask, deleteTask } from './todoLogic.js';
+import { updateTask, deleteTask } from './modules/todoLogic';
 
 let tasks = loadTasks();
 let currentView = 'inbox';
