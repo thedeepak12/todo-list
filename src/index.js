@@ -87,6 +87,7 @@ function renderTaskList() {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.classList.add('task-checkbox');
+        checkbox.classList.add(`priority-${task.priority}`);
         checkbox.addEventListener('change', () => {
             if (checkbox.checked) {
                 deleteTask(index, tasks);
