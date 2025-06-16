@@ -3,6 +3,7 @@ import todayIcon from '../assets/images/today.svg';
 import upcomingIcon from '../assets/images/upcoming.svg';
 import tagIcon from '../assets/images/tag.svg';
 import addIcon from '../assets/images/add.svg';
+import { addProject, getProjects, createProjectForm } from './project';
 
 export default function buildSidebar() {
     const sidebar = document.createElement("div");
@@ -22,7 +23,6 @@ export default function buildSidebar() {
     addTaskBtn.appendChild(addText);
 
     sidebar.appendChild(addTaskBtn);
-
 
     const views = [
         { id: 'inbox', label: 'Inbox', icon: inboxIcon },
@@ -45,37 +45,70 @@ export default function buildSidebar() {
         tile.appendChild(img);
         tile.appendChild(text);
         sidebar.appendChild(tile);
-
     });
 
     const projectSection = document.createElement("div");
     projectSection.classList.add("project-section");
 
+    const projectHeader = document.createElement("div");
+    projectHeader.classList.add("project-header");
+
     const projectTitle = document.createElement("div");
     projectTitle.classList.add("project-title");
     projectTitle.textContent = "My Projects";
 
-    projectSection.appendChild(projectTitle);
+    const addProjectBtn = document.createElement("div");
+    addProjectBtn.classList.add("add-project-btn");
 
-    const projects = ["Work", "Personal"];
+    const addProjectImg = document.createElement("img");
+    addProjectImg.src = addIcon;
+    addProjectImg.alt = "Add project";
+    addProjectImg.classList.add("add-project-img");
 
-    projects.forEach(projectName => {
-        const projectTile = document.createElement("div");
-        projectTile.classList.add("tile");
+    addProjectBtn.appendChild(addProjectImg);
 
-        const img = document.createElement("img");
-        img.src = tagIcon;
-        img.alt = '';
+    projectHeader.appendChild(projectTitle);
+    projectHeader.appendChild(addProjectBtn);
+    projectSection.appendChild(projectHeader);
 
-        const text = document.createElement("div");
-        text.textContent = projectName;
+    const projectList = document.createElement("div");
+    projectList.classList.add("project-list");
 
-        projectTile.appendChild(img);
-        projectTile.appendChild(text);
-        projectSection.appendChild(projectTile);
-    })
+    function renderProjects() {
+        projectList.innerHTML = '';
+        const projects = getProjects();
+        projects.forEach(project => {
+            const projectTile = document.createElement("div");
+            projectTile.classList.add("tile");
+            projectTile.id = project.id;
 
+            const img = document.createElement("img");
+            img.src = tagIcon;
+            img.alt = '';
+
+            const text = document.createElement("div");
+            text.textContent = project.name;
+
+            projectTile.appendChild(img);
+            projectTile.appendChild(text);
+            projectList.appendChild(projectTile);
+        });
+    }
+
+    addProjectBtn.addEventListener("click", () => {
+        const existingForm = projectSection.querySelector(".project-form");
+        if (existingForm) return;
+        const form = createProjectForm((name) => {
+            addProject(name);
+            renderProjects();
+        });
+        projectSection.insertBefore(form, projectList);
+        form.querySelector("#project-name").focus();
+    });
+
+    renderProjects();
+    projectSection.appendChild(projectList);
     sidebar.appendChild(projectSection);
-
+    
     return sidebar;
 }
