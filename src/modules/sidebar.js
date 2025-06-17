@@ -3,7 +3,8 @@ import todayIcon from '../assets/images/today.svg';
 import upcomingIcon from '../assets/images/upcoming.svg';
 import tagIcon from '../assets/images/tag.svg';
 import addIcon from '../assets/images/add.svg';
-import { addProject, getProjects, createProjectForm } from './project';
+import deleteIcon from '../assets/images/delete.svg';
+import { addProject, getProjects, createProjectForm, deleteProject } from './project';
 
 export default function buildSidebar() {
     const sidebar = document.createElement("div");
@@ -81,16 +82,32 @@ export default function buildSidebar() {
             const projectTile = document.createElement("div");
             projectTile.classList.add("tile");
             projectTile.id = project.id;
+            
+            const projectLabel = document.createElement('div');
+
+            const text = document.createElement('p');
+            text.textContent = project.name;
 
             const img = document.createElement("img");
             img.src = tagIcon;
             img.alt = '';
 
-            const text = document.createElement("div");
-            text.textContent = project.name;
+            projectLabel.appendChild(text);
+            projectLabel.appendChild(img);
 
-            projectTile.appendChild(img);
-            projectTile.appendChild(text);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.classList.add('delete-project-btn');
+            const deleteImg = document.createElement('img');
+            deleteImg.src = deleteIcon;
+            deleteBtn.appendChild(deleteImg);
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteProject(project.id);
+                renderProjects();
+            })
+
+            projectTile.appendChild(projectLabel);
+            projectTile.appendChild(deleteBtn);
             projectList.appendChild(projectTile);
         });
     }

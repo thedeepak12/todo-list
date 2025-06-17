@@ -153,6 +153,44 @@ header {
     cursor: pointer;
 }
 
+.project-section .tile {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.project-section .tile div {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-flow: row-reverse;
+}
+
+.project-section .tile div p {
+    margin: auto 8px;
+}
+
+.delete-project-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.15rem;
+    right: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.delete-project-btn img {
+    width: 20px;
+    height: 20px;
+    filter: invert(50%) sepia(20%) saturate(300%) hue-rotate(180deg);
+    visibility: hidden;
+}
+
+.tile:hover .delete-project-btn img {
+    visibility: visible;
+}
+
 .main {
     min-height: 88vh;
     padding: 2rem;

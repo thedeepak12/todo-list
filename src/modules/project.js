@@ -20,6 +20,12 @@ export function getProjects() {
     return projects;
 }
 
+export function deleteProject(id) {
+    const projects = loadProjects();
+    const updatedProjects = projects.filter(projects => projects.id !== id); 
+    saveProjects(updatedProjects);
+}
+
 export function createProjectForm(onSubmit) {
     const form = document.createElement('div');
     form.classList.add('project-form');
