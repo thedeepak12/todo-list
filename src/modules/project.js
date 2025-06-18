@@ -22,7 +22,7 @@ export function getProjects() {
 
 export function deleteProject(id) {
     const projects = loadProjects();
-    const updatedProjects = projects.filter(projects => projects.id !== id); 
+    const updatedProjects = projects.filter(project => project.id !== id);
     saveProjects(updatedProjects);
 }
 
@@ -34,7 +34,7 @@ export function createProjectForm(onSubmit) {
     input.type = 'text';
     input.id = "project-name";
     input.placeholder = "Name";
-    input.required = true
+    input.required = true;
 
     const submitBtn = document.createElement("button");
     submitBtn.type = "button";
