@@ -18,7 +18,7 @@ header.textContent = 'Todo List';
 const container = document.createElement("div");
 container.classList.add("container");
 
-const sidebar = buildSidebar();
+const sidebar = buildSidebar(updateTileSelection, renderTaskList);
 
 const main = document.createElement("div");
 main.classList.add("main");
@@ -40,20 +40,24 @@ addTaskBtn.addEventListener("click", () => {
         });
         saveTasks(tasks);
         renderTaskList();
-    });
+    }, {}, null, currentView);
     main.appendChild(form);
 });
 
-const viewTiles = sidebar.querySelectorAll('.tile:not(.project-section .tile)');
+const viewTiles = sidebar.querySelectorAll('.tile');
 viewTiles.forEach(tile => {
     tile.addEventListener('click', () => {
         currentView = tile.id;
-        viewTiles.forEach(t => t.classList.remove('selected'));
-        tile.classList.add('selected');
+        updateTileSelection(tile);
         renderTaskList();
     });
 });
 sidebar.querySelector('#inbox').classList.add('selected');
+
+function updateTileSelection(selectedTile) {
+    sidebar.querySelectorAll('.tile').forEach(t => t.classList.remove('selected'));
+    selectedTile.classList.add('selected');
+}
 
 function renderTaskList() {
     main.innerHTML = '';
@@ -68,6 +72,8 @@ function renderTaskList() {
             task.dueDate && 
             isWithinInterval(new Date(task.dueDate), { start: today, end: nextWeek })
         );
+    } else if (currentView.startsWith('project-')) {
+        filteredTasks = tasks.filter(task => task.project === currentView);
     }
 
     if (filteredTasks.length === 0) {
@@ -77,7 +83,7 @@ function renderTaskList() {
         return;
     }
 
-    filteredTasks.forEach((task, index) => {
+    filteredTasks.forEach((task) => {
         const taskDiv = document.createElement('div');
         taskDiv.classList.add('task-item');
 
@@ -86,15 +92,15 @@ function renderTaskList() {
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.classList.add('task-checkbox');
-        checkbox.classList.add(`priority-${task.priority}`);
+        checkbox.classList.add('task-checkbox', `priority-${task.priority}`);
         checkbox.addEventListener('change', () => {
             if (checkbox.checked) {
-                deleteTask(index, tasks);
+                deleteTask(task.createdAt);
+                tasks = loadTasks();
                 renderTaskList();
             }
         });
-        
+
         const taskDetails = document.createElement('div');
         taskDetails.classList.add('task-details');
 
@@ -123,9 +129,10 @@ function renderTaskList() {
         editBtn.appendChild(editImg);
         editBtn.addEventListener('click', () => {
             const form = createTaskForm((taskData) => {
-                updateTask(index, taskData, tasks);
+                updateTask(task.createdAt, taskData);
+                tasks = loadTasks();
                 renderTaskList();
-            }, task, index);
+            }, task, task.createdAt, currentView);
             main.appendChild(form);
         });
 
@@ -136,7 +143,8 @@ function renderTaskList() {
         deleteImg.alt = 'Delete task';
         deleteBtn.appendChild(deleteImg);
         deleteBtn.addEventListener('click', () => {
-            deleteTask(index, tasks);
+            deleteTask(task.createdAt);
+            tasks = loadTasks();
             renderTaskList();
         });
 
@@ -151,5 +159,14 @@ function renderTaskList() {
         main.appendChild(taskDiv);
     });
 }
+
+sidebar.querySelector('.project-list').addEventListener('click', (e) => {
+    const projectTile = e.target.closest('.tile');
+    if (projectTile && !e.target.closest('.delete-project-btn')) {
+        currentView = projectTile.id;
+        updateTileSelection(projectTile);
+        renderTaskList();
+    }
+});
 
 renderTaskList();

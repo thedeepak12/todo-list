@@ -6,7 +6,7 @@ import addIcon from '../assets/images/add.svg';
 import deleteIcon from '../assets/images/delete.svg';
 import { addProject, getProjects, createProjectForm, deleteProject } from './project';
 
-export default function buildSidebar() {
+export default function buildSidebar(updateTileSelection, renderTaskList) {
     const sidebar = document.createElement("div");
     sidebar.classList.add("sidebar");
 
@@ -63,7 +63,7 @@ export default function buildSidebar() {
 
     const addProjectImg = document.createElement("img");
     addProjectImg.src = addIcon;
-    addProjectImg.alt = "Add project";
+    addImg.alt = "Add project";
     addProjectImg.classList.add("add-project-img");
 
     addProjectBtn.appendChild(addProjectImg);
@@ -104,7 +104,7 @@ export default function buildSidebar() {
                 e.stopPropagation();
                 deleteProject(project.id);
                 renderProjects();
-            })
+            });
 
             projectTile.appendChild(projectLabel);
             projectTile.appendChild(deleteBtn);

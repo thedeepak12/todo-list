@@ -1,4 +1,4 @@
-export default function createTaskForm(onSubmit, task = {}, index) {
+export default function createTaskForm(onSubmit, task = {}, createdAt = null, currentView = 'inbox') {
     const overlay = document.createElement("div");
     overlay.classList.add("form-overlay");
 
@@ -43,6 +43,9 @@ export default function createTaskForm(onSubmit, task = {}, index) {
         const option = document.createElement("option");
         option.value = level.toLowerCase();
         option.textContent = level;
+        if (task.priority === level.toLowerCase()) {
+            option.selected = true;
+        }
         priority.appendChild(option);
     });
 
@@ -74,13 +77,14 @@ export default function createTaskForm(onSubmit, task = {}, index) {
             description: description.value.trim(),
             dueDate: dueDate.value,
             priority: priority.value,
+            project: currentView.startsWith('project-') ? currentView : null
         };
         if (taskData.title) {
-            onSubmit(taskData, index);
+            onSubmit(taskData, createdAt);
             overlay.remove();
         }
     });
-    
+
     cancel.addEventListener("click", () => {
         overlay.remove();
     });
